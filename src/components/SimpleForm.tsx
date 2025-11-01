@@ -10,6 +10,7 @@ interface SimpleFormProps {
   submitTitle?: string;
   isSubmitting: boolean;
   accessibilityLabel?: string;
+  disableSubmit?: boolean;
 }
 
 export default function SimpleForm({
@@ -20,6 +21,7 @@ export default function SimpleForm({
   submitTitle = "Submit",
   isSubmitting,
   accessibilityLabel = "submit form",
+  disableSubmit = false,
 }: SimpleFormProps) {
   return (
     <View style={styles.container}>
@@ -33,7 +35,7 @@ export default function SimpleForm({
         onPress={onSubmit}
         title={submitTitle}
         accessibilityLabel={accessibilityLabel}
-        disabled={!value || isSubmitting}
+        disabled={!value || isSubmitting || disableSubmit}
       />
     </View>
   );

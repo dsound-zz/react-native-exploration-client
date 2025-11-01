@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { TodoTypes } from "../types/todoTypes";
-import { Modal } from "../components/Modal";
-import SimpleForm from "../components/SimpleForm";
+import { Modal } from "./Modal";
+import SimpleForm from "./SimpleForm";
 
 interface EditTodoModalProps {
   visible: boolean;
@@ -28,6 +28,8 @@ export default function EditTodoModal({
     }
   }, [visible, editableTodo.id, editableTodo.title]);
 
+  const hasChanged = todo.trim() !== (editableTodo.title ?? "").trim();
+
   return (
     <Modal visible={visible} onClose={onClose} title={title}>
       <SimpleForm
@@ -36,6 +38,7 @@ export default function EditTodoModal({
         placeholder="Edit todo"
         isSubmitting={isSubmitting}
         onSubmit={() => onSubmit(todo)}
+        disableSubmit={!hasChanged}
       />
     </Modal>
   );

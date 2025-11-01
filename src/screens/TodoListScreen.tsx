@@ -6,17 +6,17 @@ import {
   deleteTodo,
   getTodos,
   updateTodo,
-} from "../lib/api";
+} from "../services/api";
 import { TodoTypes } from "../types/todoTypes";
 import Loading from "../components/Loading";
 import Error from "../components/Error";
-import EditTodoModal from "./EditTodoModal";
-import DeleteConfirmModal from "./DeleteConfirmModal";
+import EditTodoModal from "../components/EditTodoModal";
+import DeleteConfirmModal from "../components/DeleteConfirmModal";
 
 import { View, FlatList, Text } from "react-native";
 import SimpleForm from "../components/SimpleForm";
 import ScreenContainer from "../components/ScreenContainer";
-import { colors, typography } from "../lib/typography";
+import { colors, typography } from "../utils/typography";
 import Icon from "../components/Icon";
 
 export default function TodoListScreen() {
@@ -25,8 +25,8 @@ export default function TodoListScreen() {
   const [todosError, setTodosError] = useState<string | null>(null);
   const [todo, setTodo] = useState<TodoTypes["title"]>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isEditingTodo, setIsEditingTodo] = useState<TodoTypes | null>(null);
-  const [isDeletingTodo, setIsDeletingTodo] = useState<TodoTypes | null>(null);
+  const [editingTodo, setEditingTodo] = useState<TodoTypes | null>(null);
+  const [todoToDelete, setTodoToDelete] = useState<TodoTypes | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   async function loadTodos() {
@@ -66,7 +66,7 @@ export default function TodoListScreen() {
   }
 
   async function onUpdate(updatedTitle: string) {
-    if (!isEditingTodo) return;
+    if (!editingTodo) return;
 
     setIsSubmitting(true);
     setTodosError(null);
@@ -76,11 +76,11 @@ export default function TodoListScreen() {
       return;
     }
     try {
-      const updatedTodo = await updateTodo(isEditingTodo.id, trimmedTitle);
+      const updatedTodo = await updateTodo(editingTodo.id, trimmedTitle);
       setTodos((prev) =>
         prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
       );
-      setIsEditingTodo(null);
+      setEditingTodo(null);
     } catch (error: unknown) {
       setTodosError(String(error));
     } finally {
@@ -88,20 +88,20 @@ export default function TodoListScreen() {
     }
   }
   async function onDelete() {
-    if (!isDeletingTodo) return;
+    if (!todoToDelete) return;
 
     // Optimistic update: immediately remove from UI
-    const todoToDelete = isDeletingTodo;
+    const todoIdToDelete = todoToDelete.id;
     const previousTodos = [...todos];
 
-    setTodos((prev) => prev.filter((todo) => todo.id !== todoToDelete.id));
-    setIsDeletingTodo(null);
+    setTodos((prev) => prev.filter((todo) => todo.id !== todoIdToDelete));
+    setTodoToDelete(null);
 
     // Then sync with database
     try {
       setIsDeleting(true);
       setTodosError(null);
-      await deleteTodo(todoToDelete.id);
+      await deleteTodo(todoIdToDelete);
     } catch (error: unknown) {
       // Rollback optimistic update on error
       setTodos(previousTodos);
@@ -158,8 +158,8 @@ export default function TodoListScreen() {
         renderItem={({ item }) => (
           <Item
             todo={item}
-            setIsEditing={setIsEditingTodo}
-            onDelete={setIsDeletingTodo}
+            setIsEditing={setEditingTodo}
+            onDelete={setTodoToDelete}
             onComplete={onComplete}
             isSubmitting={isSubmitting}
           />
@@ -167,21 +167,21 @@ export default function TodoListScreen() {
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={{ width: "100%" }}
       />
-      {isEditingTodo && (
+      {editingTodo && (
         <EditTodoModal
-          visible={!!isEditingTodo}
-          onClose={() => setIsEditingTodo(null)}
+          visible={!!editingTodo}
+          onClose={() => setEditingTodo(null)}
           title="Edit Todo"
-          editableTodo={isEditingTodo}
+          editableTodo={editingTodo}
           onSubmit={onUpdate}
           isSubmitting={isSubmitting}
         />
       )}
-      {isDeletingTodo && (
+      {todoToDelete && (
         <DeleteConfirmModal
-          visible={!!isDeletingTodo}
-          onClose={() => setIsDeletingTodo(null)}
-          todo={isDeletingTodo}
+          visible={!!todoToDelete}
+          onClose={() => setTodoToDelete(null)}
+          todo={todoToDelete}
           onConfirm={onDelete}
           isDeleting={isDeleting}
         />
@@ -206,7 +206,7 @@ function Item({
   isSubmitting,
 }: ItemProps) {
   const { title, done } = todo;
-  console.log(title);
+
   return (
     <View style={itemStyles.container}>
       <View style={itemStyles.textContainer}>

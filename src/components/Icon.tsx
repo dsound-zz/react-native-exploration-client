@@ -1,5 +1,5 @@
 import { TouchableOpacity, View } from "react-native";
-import { colors } from "../lib/typography";
+import { colors } from "../utils/typography";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Fontisto from "react-native-vector-icons/Fontisto";
 

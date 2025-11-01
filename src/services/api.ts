@@ -101,3 +101,4 @@ export async function deleteTodo(todoId: TodoTypes["id"]): Promise<void> {
     throw error;
   }
 }
+

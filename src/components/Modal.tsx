@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from "react-native";
-import { colors } from "../lib/typography";
+import { colors } from "../utils/typography";
 
 interface ModalProps {
   visible: boolean;

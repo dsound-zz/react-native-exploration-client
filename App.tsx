@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import TodoListScreen from "./src/TodoList/TodoList";
+import TodoListScreen from "./src/screens/TodoListScreen";
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 // import TodoListScreen from "./src/screens/TodoListScreen";

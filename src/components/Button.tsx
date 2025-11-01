@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, Text } from "react-native";
-import { colors } from "../lib/typography";
+import { colors } from "../utils/typography";
 
 export default function Button({
   onPress,

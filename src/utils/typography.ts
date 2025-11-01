@@ -23,3 +23,4 @@ export const colors = {
   delete: "#E78711",
   checkbox: "#4CA",
 } as const;
+
