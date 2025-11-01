@@ -21,4 +21,5 @@ export const colors = {
   error: "#F4433642",
   update: "#0CBDDC",
   delete: "#E78711",
+  checkbox: "#4CA",
 } as const;

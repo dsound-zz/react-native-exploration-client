@@ -28,17 +28,16 @@ function logError(error: unknown) {
 
 export async function getTodos(): Promise<TodoTypes[]> {
   console.log(BASE_URL);
-  let todos: TodoTypes[] = [];
+
   try {
     const response = await axios.get<TodoTypes[]>(`${BASE_URL}/todos`, {
       timeout: 8000,
     });
-    todos = response.data;
+    return response.data;
   } catch (error) {
     logError(error);
     throw error;
   }
-  return todos;
 }
 
 export async function createTodo(newTitle: string): Promise<TodoTypes> {
@@ -48,6 +47,55 @@ export async function createTodo(newTitle: string): Promise<TodoTypes> {
       done: false,
     });
     return response.data;
+  } catch (error) {
+    logError(error);
+    throw error;
+  }
+}
+
+export async function updateTodo(
+  todoId: TodoTypes["id"],
+  newTitle: TodoTypes["title"]
+): Promise<TodoTypes> {
+  try {
+    const response = await axios.patch<TodoTypes>(
+      `${BASE_URL}/todos/${todoId}`,
+      {
+        id: todoId,
+        title: newTitle,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    logError(error);
+    throw error;
+  }
+}
+
+export async function completeTodo(
+  todoId: TodoTypes["id"],
+  done: TodoTypes["done"]
+): Promise<TodoTypes> {
+  try {
+    const response = await axios.patch<TodoTypes>(
+      `${BASE_URL}/todos/${todoId}`,
+      {
+        id: todoId,
+        done,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    logError(error);
+    throw error;
+  }
+}
+
+export async function deleteTodo(todoId: TodoTypes["id"]): Promise<void> {
+  try {
+    await axios.delete(`${BASE_URL}/todos/${todoId}`, {
+      timeout: 8000,
+    });
   } catch (error) {
     logError(error);
     throw error;
