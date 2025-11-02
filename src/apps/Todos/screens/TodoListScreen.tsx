@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { TodoTypes } from "../../../types/todoTypes";
 import Loading from "../../../components/Loading";
@@ -13,8 +13,10 @@ import { colors, typography } from "../../../utils/typography";
 import Icon from "../../../components/Icon";
 import { useTodos } from "../hooks/useTodos";
 import { getDate } from "../../../utils/dateFormatter";
+import { Selector } from "../../../components/Selector";
 
 export default function TodoListScreen() {
+  const [selected, setSelected] = useState<number | null>(null);
   const {
     todo,
     todos,
@@ -50,6 +52,15 @@ export default function TodoListScreen() {
         accessibilityLabel="Add Todo"
         isSubmitting={isSubmitting}
       />
+      <View style={{ marginVertical: 6 }}>
+        <Selector
+          items={todos}
+          labelKey="title"
+          valueKey="id"
+          selectedValue={selected}
+          onSelect={(value) => setSelected(value)}
+        />
+      </View>
       <FlatList
         data={todos}
         renderItem={({ item }) => (
