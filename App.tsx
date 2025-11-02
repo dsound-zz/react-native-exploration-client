@@ -1,50 +1,69 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
-import TodoListScreen from "./src/screens/TodoListScreen";
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-// import TodoListScreen from "./src/screens/TodoListScreen";
-// import EditTodoScreen from "./src/screens/EditTodoScreen";
+import { MaterialIcons } from "@expo/vector-icons";
+import TodosNavigator from "./src/apps/Todos";
+import NotesNavigator from "./src/apps/Notes";
+import { colors } from "./src/utils/typography";
 
-// --------------------------
-// 1️⃣ Define all route names and their expected params.
-// This gives TypeScript type safety for navigation and route objects.
-// If a screen takes params, you declare them here.
-export type RootStackParamList = {
-  Home: undefined; // Home screen takes no params
-  Edit: { id: number }; // Edit screen needs an id (number)
+// Define all tab route names and their expected params
+export type RootTabParamList = {
+  Todos: undefined;
+  Notes: undefined;
 };
 
-// --------------------------
-// 2️⃣ Create the Stack Navigator
-// You pass your type (RootStackParamList) so navigation is type-safe.
-const Stack = createNativeStackNavigator<RootStackParamList>();
+// Create the Tab Navigator
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
-// --------------------------
-// 3️⃣ Main App Component
+// Main App Component
 export default function App() {
   return (
     <SafeAreaProvider>
-      {/* The NavigationContainer wraps your entire navigation tree. */}
       <NavigationContainer>
-        {/* Stack.Navigator holds all your screens that can be navigated between */}
-        <Stack.Navigator>
-          {/* Each Stack.Screen registers one screen in your stack */}
-          <Stack.Screen
-            name="Home" // Route name
-            component={TodoListScreen} // What component renders for this route
-            options={{ title: "Todos" }} // Config for header title
+        <Tab.Navigator
+          screenOptions={{
+            tabBarActiveTintColor: colors.primary,
+            tabBarInactiveTintColor: colors.textSecondary,
+            headerShown: false,
+            tabBarStyle: {
+              backgroundColor: colors.background,
+              borderTopColor: colors.border,
+            },
+          }}
+        >
+          <Tab.Screen
+            name="Todos"
+            component={TodosNavigator}
+            options={{
+              tabBarIcon: ({
+                color,
+                size,
+              }: {
+                color: string;
+                size: number;
+              }) => (
+                <MaterialIcons name="check-box" size={size} color={color} />
+              ),
+              tabBarLabel: "Todos",
+            }}
           />
-
-          {/* <Stack.Screen
-          name="Edit"
-          component={EditTodoScreen}
-          options={{ title: "Edit Todo" }}
-        /> */}
-        </Stack.Navigator>
-
-        {/* The StatusBar adjusts colors/icons at the top of the phone screen */}
+          <Tab.Screen
+            name="Notes"
+            component={NotesNavigator}
+            options={{
+              tabBarIcon: ({
+                color,
+                size,
+              }: {
+                color: string;
+                size: number;
+              }) => <MaterialIcons name="note" size={size} color={color} />,
+              tabBarLabel: "Notes",
+            }}
+          />
+        </Tab.Navigator>
         <StatusBar style="auto" />
       </NavigationContainer>
     </SafeAreaProvider>

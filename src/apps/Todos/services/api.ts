@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Platform } from "react-native";
-import { TodoTypes } from "../types/todoTypes";
+import { TodoTypes } from "../../../types/todoTypes";
 
 const ENV_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 const BASE_URL =
@@ -101,4 +101,3 @@ export async function deleteTodo(todoId: TodoTypes["id"]): Promise<void> {
     throw error;
   }
 }
-

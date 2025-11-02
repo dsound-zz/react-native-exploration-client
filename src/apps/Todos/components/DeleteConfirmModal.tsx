@@ -1,8 +1,8 @@
-import { Modal } from "./Modal";
+import { Modal } from "../../../components/Modal";
 import { View, Text, StyleSheet } from "react-native";
-import Button from "./Button";
-import { colors, typography } from "../utils/typography";
-import { TodoTypes } from "../types/todoTypes";
+import Button from "../../../components/Button";
+import { colors, typography } from "../../../utils/typography";
+import { TodoTypes } from "../../../types/todoTypes";
 
 interface DeleteConfirmModalProps {
   visible: boolean;
@@ -84,4 +84,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-

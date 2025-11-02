@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { TodoTypes } from "../types/todoTypes";
-import { Modal } from "./Modal";
-import SimpleForm from "./SimpleForm";
+import { TodoTypes } from "../../../types/todoTypes";
+import { Modal } from "../../../components/Modal";
+import SimpleForm from "../../../components/SimpleForm";
 
 interface EditTodoModalProps {
   visible: boolean;
