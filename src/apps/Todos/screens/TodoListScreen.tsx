@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { TodoTypes } from "../../../types/todoTypes";
 import Loading from "../../../components/Loading";
@@ -16,7 +16,10 @@ import { getDate } from "../../../utils/dateFormatter";
 import { Selector } from "../../../components/Selector";
 
 export default function TodoListScreen() {
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<
+    "all" | "done" | "incompleted" | "title"
+  >("all");
   const {
     todo,
     todos,
@@ -36,6 +39,16 @@ export default function TodoListScreen() {
     todoToDelete,
   } = useTodos();
 
+  const visibleTodos = useMemo(() => {
+    let results = [...todos];
+    if (filterType === "done") results = results.filter((t) => t.done);
+    if (filterType === "incompleted") results = results.filter((t) => !t.done);
+    if (filterType === "title")
+      results = results.sort((a, b) => a.title.localeCompare(b.title));
+
+    return results;
+  }, [todos, filterType]);
+
   if (todosLoading) return <Loading />;
   if (todosError) return <Error message={todosError} onRetry={loadTodos} />;
 
@@ -52,17 +65,41 @@ export default function TodoListScreen() {
         accessibilityLabel="Add Todo"
         isSubmitting={isSubmitting}
       />
-      <View style={{ marginVertical: 6 }}>
+      <View
+        style={{
+          marginVertical: 6,
+          borderWidth: 1,
+          borderColor: "#ddd",
+          borderRadius: 8,
+          backgroundColor: "#fff",
+        }}
+      >
         <Selector
-          items={todos}
-          labelKey="title"
-          valueKey="id"
-          selectedValue={selected}
-          onSelect={(value) => setSelected(value)}
+          items={
+            todos.length > 0
+              ? [
+                  ...Object.keys(todos[0])
+                    .filter((key) => key !== "id" && key !== "created_at")
+                    .map((key) => ({
+                      label:
+                        key === "done"
+                          ? "Completed"
+                          : key[0].toUpperCase() + key.slice(1),
+                      value: key,
+                    })),
+                  {
+                    label: "Incompleted",
+                    value: "incompleted",
+                  },
+                ]
+              : []
+          }
+          selectedValue={filterType}
+          onSelect={(value) => setFilterType(value)}
         />
       </View>
       <FlatList
-        data={todos}
+        data={visibleTodos}
         renderItem={({ item }) => (
           <Item
             todo={item}
